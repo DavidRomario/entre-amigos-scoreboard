@@ -21,7 +21,7 @@ const AboutTeam = () => {
   ];
 
   return (
-    <section className="py-20 bg-field-light">
+    <section className="py-20 bg-mustard-light">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-team-black mb-6">

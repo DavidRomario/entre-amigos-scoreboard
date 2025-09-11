@@ -102,7 +102,7 @@ const Players = () => {
   };
 
   return (
-    <section className="py-20 bg-field-light">
+    <section className="py-20 bg-mustard-light">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-team-black mb-6">
@@ -138,7 +138,7 @@ const Players = () => {
 
               <div className="grid grid-cols-2 gap-4 mt-6">
                 {getPlayerStats(player).map((stat, index) => (
-                  <div key={index} className="text-center bg-field-light rounded-lg p-3">
+                  <div key={index} className="text-center bg-mustard-light rounded-lg p-3">
                     <div className="text-xl font-bold text-primary">{stat.value}</div>
                     <div className="text-xs text-muted-foreground">{stat.label}</div>
                   </div>

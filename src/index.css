@@ -17,41 +17,41 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Football team colors - green field theme */
-    --primary: 120 100% 25%;
+    /* Football team colors - mustard yellow and black */
+    --primary: 45 85% 45%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 120 100% 35%;
+    --primary-glow: 45 85% 55%;
 
     --secondary: 0 0% 12%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 120 15% 95%;
-    --muted-foreground: 120 10% 45%;
+    --muted: 45 25% 95%;
+    --muted-foreground: 45 15% 45%;
 
-    --accent: 45 100% 60%;
+    --accent: 45 100% 65%;
     --accent-foreground: 0 0% 12%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 120 20% 85%;
-    --input: 120 20% 90%;
-    --ring: 120 100% 25%;
+    --border: 45 20% 85%;
+    --input: 45 20% 90%;
+    --ring: 45 85% 45%;
 
     /* Custom design tokens */
-    --field-green: 120 100% 25%;
-    --grass-light: 120 60% 85%;
-    --victory-gold: 45 100% 60%;
+    --mustard-yellow: 45 85% 45%;
+    --mustard-light: 45 60% 85%;
+    --victory-gold: 45 100% 65%;
     --team-black: 0 0% 12%;
     
     /* Gradients */
-    --gradient-field: linear-gradient(135deg, hsl(var(--field-green)), hsl(var(--primary-glow)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--field-green)) 0%, hsl(var(--team-black)) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(var(--background)) 0%, hsl(var(--grass-light)) 100%);
+    --gradient-field: linear-gradient(135deg, hsl(var(--mustard-yellow)), hsl(var(--primary-glow)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--mustard-yellow)) 0%, hsl(var(--team-black)) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(var(--background)) 0%, hsl(var(--mustard-light)) 100%);
 
     /* Shadows */
-    --shadow-field: 0 20px 40px -12px hsl(var(--field-green) / 0.3);
-    --shadow-card: 0 8px 32px -8px hsl(var(--field-green) / 0.15);
+    --shadow-field: 0 20px 40px -12px hsl(var(--mustard-yellow) / 0.3);
+    --shadow-card: 0 8px 32px -8px hsl(var(--mustard-yellow) / 0.15);
     --shadow-hero: 0 25px 50px -12px hsl(var(--team-black) / 0.4);
 
     /* Animations */

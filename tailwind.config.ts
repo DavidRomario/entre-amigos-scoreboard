@@ -49,9 +49,9 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         // Custom football theme colors
-        field: {
-          green: "hsl(var(--field-green))",
-          light: "hsl(var(--grass-light))",
+        mustard: {
+          DEFAULT: "hsl(var(--mustard-yellow))",
+          light: "hsl(var(--mustard-light))",
         },
         victory: "hsl(var(--victory-gold))",
         team: {

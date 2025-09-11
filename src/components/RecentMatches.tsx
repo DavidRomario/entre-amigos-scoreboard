@@ -109,7 +109,7 @@ const RecentMatches = () => {
         </div>
 
         <div className="text-center mt-12">
-          <div className="inline-flex items-center gap-4 bg-field-light rounded-xl p-6">
+          <div className="inline-flex items-center gap-4 bg-mustard-light rounded-xl p-6">
             <Trophy className="w-8 h-8 text-primary" />
             <div>
               <div className="text-2xl font-bold text-team-black">Próximo Jogo</div>
