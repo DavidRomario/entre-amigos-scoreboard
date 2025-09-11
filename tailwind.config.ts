@@ -22,6 +22,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -46,6 +47,15 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        // Custom football theme colors
+        field: {
+          green: "hsl(var(--field-green))",
+          light: "hsl(var(--grass-light))",
+        },
+        victory: "hsl(var(--victory-gold))",
+        team: {
+          black: "hsl(var(--team-black))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
