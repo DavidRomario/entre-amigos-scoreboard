@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,116 +6,95 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, Edit } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { addUser, deleteUser, editUser } from "@/services/usersServices";
 
 interface Player {
   id: number;
   name: string;
   position: string;
-  number: number;
+  jerseyNumber: number;
   age: number;
 }
 
-const PlayerManager = () => {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+interface PlayerManagerProps {
+  players: Player[];
+  fetchPlayers?: () => void;
+}
+
+const PlayerManager: React.FC<PlayerManagerProps> = ({ players, fetchPlayers }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingPlayerId, setEditingPlayerId] = useState<number | null>(null);
   const [newPlayer, setNewPlayer] = useState({
     name: "",
     position: "",
-    number: "",
+    jerseyNumber: "",
     age: "",
   });
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchPlayers();
-  }, []);
+  const positionOrder = ["Goleiro", "Zagueiro", "Lateral", "Volante", "Meio-campo", "Atacante"];
 
-  const fetchPlayers = async () => {
-    try {
-      // Aqui você integrará com sua API
-      const response = await fetch('/api/players', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-        },
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setPlayers(data);
-      }
-    } catch (error) {
-      // Para demonstração, usando dados mockados
-      setPlayers([
-        { id: 1, name: "João Silva", position: "Goleiro", number: 1, age: 28 },
-        { id: 2, name: "Pedro Santos", position: "Zagueiro", number: 4, age: 25 },
-        { id: 3, name: "Carlos Lima", position: "Meio-campo", number: 10, age: 30 },
-        { id: 4, name: "Rafael Costa", position: "Atacante", number: 9, age: 24 },
-      ]);
-    }
+  const sortedPlayers = [...players].sort(
+    (a, b) => positionOrder.indexOf(a.position) - positionOrder.indexOf(b.position)
+  );
+
+  const openAddModal = () => {
+    setEditingPlayerId(null);
+    setNewPlayer({ name: "", position: "", jerseyNumber: "", age: "" });
+    setIsDialogOpen(true);
   };
 
-  const handleAddPlayer = async (e: React.FormEvent) => {
+  const openEditModal = (player: Player) => {
+    setEditingPlayerId(player.id);
+    setNewPlayer({
+      name: player.name,
+      position: player.position,
+      jerseyNumber: player.jerseyNumber.toString(),
+      age: player.age.toString(),
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleSavePlayer = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     try {
-      const response = await fetch('/api/players', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-        },
-        body: JSON.stringify({
+      if (editingPlayerId) {
+        await editUser(editingPlayerId, {
           name: newPlayer.name,
           position: newPlayer.position,
-          number: parseInt(newPlayer.number),
+          jerseyNumber: parseInt(newPlayer.jerseyNumber),
           age: parseInt(newPlayer.age),
-        }),
-      });
-
-      if (response.ok) {
-        toast({
-          title: "Jogador adicionado!",
-          description: `${newPlayer.name} foi adicionado ao time.`,
         });
-        setNewPlayer({ name: "", position: "", number: "", age: "" });
-        setIsAddDialogOpen(false);
-        fetchPlayers();
+        toast({ title: "Jogador atualizado!", description: `${newPlayer.name} foi atualizado.` });
+      } else {
+        await addUser({
+          name: newPlayer.name,
+          position: newPlayer.position,
+          jerseyNumber: parseInt(newPlayer.jerseyNumber),
+          age: parseInt(newPlayer.age),
+        });
+        toast({ title: "Jogador adicionado!", description: `${newPlayer.name} foi adicionado ao time.` });
       }
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível adicionar o jogador.",
-        variant: "destructive",
-      });
+
+      setNewPlayer({ name: "", position: "", jerseyNumber: "", age: "" });
+      setEditingPlayerId(null);
+      setIsDialogOpen(false);
+      fetchPlayers && fetchPlayers();
+    } catch {
+      toast({ title: "Erro", description: "Não foi possível salvar.", variant: "destructive" });
     }
   };
 
   const handleDeletePlayer = async (playerId: number, playerName: string) => {
     if (!confirm(`Tem certeza que deseja excluir ${playerName}?`)) return;
-
     try {
-      const response = await fetch(`/api/players/${playerId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-        },
-      });
-
-      if (response.ok) {
-        toast({
-          title: "Jogador removido!",
-          description: `${playerName} foi removido do time.`,
-        });
-        fetchPlayers();
-      }
-    } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível remover o jogador.",
-        variant: "destructive",
-      });
+      await deleteUser(playerId);
+      toast({ title: "Jogador removido!", description: `${playerName} foi removido do time.` });
+      fetchPlayers && fetchPlayers();
+    } catch {
+      toast({ title: "Erro", description: "Não foi possível remover.", variant: "destructive" });
     }
   };
 
@@ -123,18 +102,19 @@ const PlayerManager = () => {
     <Card className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-team-black">Jogadores do Time</h2>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="hero" className="flex items-center gap-2">
+            <Button variant="hero" className="flex items-center gap-2" onClick={openAddModal}>
               <Plus className="w-4 h-4" />
               Adicionar Jogador
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Adicionar Novo Jogador</DialogTitle>
+              <DialogTitle>{editingPlayerId ? "Editar Jogador" : "Adicionar Novo Jogador"}</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleAddPlayer} className="space-y-4">
+            <form onSubmit={handleSavePlayer} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="playerName">Nome</Label>
                 <Input
@@ -145,10 +125,13 @@ const PlayerManager = () => {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="playerPosition">Posição</Label>
-                <Select value={newPlayer.position} onValueChange={(value) => setNewPlayer({ ...newPlayer, position: value })}>
+                <Select
+                  value={newPlayer.position}
+                  onValueChange={(value) => setNewPlayer({ ...newPlayer, position: value })}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione a posição" />
                   </SelectTrigger>
@@ -156,6 +139,7 @@ const PlayerManager = () => {
                     <SelectItem value="Goleiro">Goleiro</SelectItem>
                     <SelectItem value="Zagueiro">Zagueiro</SelectItem>
                     <SelectItem value="Lateral">Lateral</SelectItem>
+                    <SelectItem value="Volante">Volante</SelectItem>
                     <SelectItem value="Meio-campo">Meio-campo</SelectItem>
                     <SelectItem value="Atacante">Atacante</SelectItem>
                   </SelectContent>
@@ -168,15 +152,15 @@ const PlayerManager = () => {
                   <Input
                     id="playerNumber"
                     type="number"
-                    value={newPlayer.number}
-                    onChange={(e) => setNewPlayer({ ...newPlayer, number: e.target.value })}
+                    value={newPlayer.jerseyNumber}
+                    onChange={(e) => setNewPlayer({ ...newPlayer, jerseyNumber: e.target.value })}
                     placeholder="Número da camisa"
                     min="1"
                     max="99"
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="playerAge">Idade</Label>
                   <Input
@@ -193,7 +177,7 @@ const PlayerManager = () => {
               </div>
 
               <Button type="submit" variant="hero" className="w-full">
-                Adicionar Jogador
+                {editingPlayerId ? "Salvar Alterações" : "Adicionar Jogador"}
               </Button>
             </form>
           </DialogContent>
@@ -212,15 +196,15 @@ const PlayerManager = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {players.map((player) => (
+            {sortedPlayers.map((player) => (
               <TableRow key={player.id}>
-                <TableCell className="font-medium">{player.number}</TableCell>
+                <TableCell className="font-medium">{player.jerseyNumber}</TableCell>
                 <TableCell>{player.name}</TableCell>
                 <TableCell>{player.position}</TableCell>
                 <TableCell>{player.age} anos</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" onClick={() => openEditModal(player)}>
                       <Edit className="w-4 h-4" />
                     </Button>
                     <Button

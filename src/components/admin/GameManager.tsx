@@ -8,20 +8,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, Edit, Calendar, MapPin } from "lucide-react";
-
-interface Game {
-  id: number;
-  date: string;
-  opponent: string;
-  homeScore: number;
-  awayScore: number;
-  location: string;
-  status: 'victory' | 'defeat' | 'draw';
-}
+import { getAllMatches, addMatch, editMatch, deleteMatch } from "@/services/matchesServices";
 
 const GameManager = () => {
-  const [games, setGames] = useState<Game[]>([]);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [games, setGames] = useState([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingGameId, setEditingGameId] = useState<number | null>(null);
   const [newGame, setNewGame] = useState({
     date: "",
     opponent: "",
@@ -37,133 +29,111 @@ const GameManager = () => {
 
   const fetchGames = async () => {
     try {
-      // Aqui você integrará com sua API
-      const response = await fetch('/api/games', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-        },
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setGames(data);
-      }
+      const data = await getAllMatches();
+      const formattedGames = data.map((game) => ({
+        id: game.id,
+        date: new Date(game.match_date).toLocaleDateString(),
+        opponent: game.opponent_name,
+        homeScore: game.goals_entre_amigos,
+        awayScore: game.goals_opponent,
+        location: game.location,
+        status: getGameStatus(game.goals_entre_amigos, game.goals_opponent),
+      }));
+      setGames(formattedGames);
     } catch (error) {
-      // Para demonstração, usando dados mockados
-      setGames([
-        {
-          id: 1,
-          date: "15/12/2024",
-          opponent: "Vila Nova FC",
-          homeScore: 3,
-          awayScore: 1,
-          location: "Campo do Parque",
-          status: "victory",
-        },
-        {
-          id: 2,
-          date: "08/12/2024",
-          opponent: "Atlético Amigos",
-          homeScore: 2,
-          awayScore: 2,
-          location: "Centro Esportivo",
-          status: "draw",
-        },
-        {
-          id: 3,
-          date: "01/12/2024",
-          opponent: "Real Friends",
-          homeScore: 1,
-          awayScore: 2,
-          location: "Campo da Escola",
-          status: "defeat",
-        }
-      ]);
+      console.error(error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível buscar partidas.",
+        variant: "destructive",
+      });
     }
   };
 
-  const getGameStatus = (homeScore: number, awayScore: number): 'victory' | 'defeat' | 'draw' => {
-    if (homeScore > awayScore) return 'victory';
-    if (homeScore < awayScore) return 'defeat';
-    return 'draw';
+  const getGameStatus = (homeScore, awayScore) => {
+    if (homeScore > awayScore) return "victory";
+    if (homeScore < awayScore) return "defeat";
+    return "draw";
   };
 
-  const handleAddGame = async (e: React.FormEvent) => {
+  const openAddModal = () => {
+    setEditingGameId(null);
+    setNewGame({ date: "", opponent: "", homeScore: "", awayScore: "", location: "" });
+    setIsDialogOpen(true);
+  };
+
+  const openEditModal = (game) => {
+    setEditingGameId(game.id);
+    setNewGame({
+      date: new Date(game.date).toISOString().split("T")[0],
+      opponent: game.opponent,
+      homeScore: game.homeScore.toString(),
+      awayScore: game.awayScore.toString(),
+      location: game.location,
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleSaveGame = async (e) => {
     e.preventDefault();
-    
-    const homeScore = parseInt(newGame.homeScore);
-    const awayScore = parseInt(newGame.awayScore);
-    const status = getGameStatus(homeScore, awayScore);
-
     try {
-      const response = await fetch('/api/games', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-        },
-        body: JSON.stringify({
-          date: newGame.date,
-          opponent: newGame.opponent,
-          homeScore,
-          awayScore,
-          location: newGame.location,
-          status,
-        }),
-      });
+      const homeScore = parseInt(newGame.homeScore);
+      const awayScore = parseInt(newGame.awayScore);
 
-      if (response.ok) {
+      const payload = {
+        match_date: newGame.date,
+        opponent_name: newGame.opponent,
+        goals_entre_amigos: homeScore,
+        goals_opponent: awayScore,
+        location: newGame.location,
+      };
+
+      if (editingGameId) {
+        await editMatch(editingGameId, payload);
+        toast({
+          title: "Jogo atualizado!",
+          description: `Resultado contra ${newGame.opponent} foi atualizado.`,
+        });
+      } else {
+        await addMatch(payload);
         toast({
           title: "Jogo adicionado!",
           description: `Resultado contra ${newGame.opponent} foi registrado.`,
         });
-        setNewGame({ date: "", opponent: "", homeScore: "", awayScore: "", location: "" });
-        setIsAddDialogOpen(false);
-        fetchGames();
       }
+
+      setNewGame({ date: "", opponent: "", homeScore: "", awayScore: "", location: "" });
+      setEditingGameId(null);
+      setIsDialogOpen(false);
+      await fetchGames();
     } catch (error) {
+      console.error(error);
       toast({
         title: "Erro",
-        description: "Não foi possível adicionar o jogo.",
+        description: "Não foi possível salvar o jogo.",
         variant: "destructive",
       });
     }
   };
 
-  const handleDeleteGame = async (gameId: number, opponent: string) => {
+  const handleDeleteGame = async (gameId, opponent) => {
     if (!confirm(`Tem certeza que deseja excluir o jogo contra ${opponent}?`)) return;
-
     try {
-      const response = await fetch(`/api/games/${gameId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
-        },
-      });
-
-      if (response.ok) {
-        toast({
-          title: "Jogo removido!",
-          description: `Jogo contra ${opponent} foi removido.`,
-        });
-        fetchGames();
-      }
+      await deleteMatch(gameId);
+      toast({ title: "Jogo removido!", description: `Jogo contra ${opponent} foi removido.` });
+      await fetchGames();
     } catch (error) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível remover o jogo.",
-        variant: "destructive",
-      });
+      toast({ title: "Erro", description: "Não foi possível remover o jogo.", variant: "destructive" });
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status) => {
     switch (status) {
-      case 'victory':
+      case "victory":
         return <Badge className="bg-primary text-white">Vitória</Badge>;
-      case 'defeat':
+      case "defeat":
         return <Badge variant="destructive">Derrota</Badge>;
-      case 'draw':
+      case "draw":
         return <Badge className="bg-victory text-team-black">Empate</Badge>;
       default:
         return <Badge variant="secondary">-</Badge>;
@@ -174,18 +144,18 @@ const GameManager = () => {
     <Card className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-team-black">Histórico de Jogos</h2>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button variant="hero" className="flex items-center gap-2">
+            <Button variant="hero" className="flex items-center gap-2" onClick={openAddModal}>
               <Plus className="w-4 h-4" />
               Adicionar Jogo
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Registrar Novo Jogo</DialogTitle>
+              <DialogTitle>{editingGameId ? "Editar Jogo" : "Registrar Novo Jogo"}</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleAddGame} className="space-y-4">
+            <form onSubmit={handleSaveGame} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="gameDate">Data do Jogo</Label>
                 <Input
@@ -196,7 +166,7 @@ const GameManager = () => {
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="opponent">Adversário</Label>
                 <Input
@@ -221,7 +191,7 @@ const GameManager = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="awayScore">Gols Adversário</Label>
                   <Input
@@ -248,7 +218,7 @@ const GameManager = () => {
               </div>
 
               <Button type="submit" variant="hero" className="w-full">
-                Registrar Jogo
+                {editingGameId ? "Salvar Alterações" : "Registrar Jogo"}
               </Button>
             </form>
           </DialogContent>
@@ -278,9 +248,7 @@ const GameManager = () => {
                 </TableCell>
                 <TableCell className="font-medium">{game.opponent}</TableCell>
                 <TableCell>
-                  <span className="font-bold">
-                    {game.homeScore} - {game.awayScore}
-                  </span>
+                  <span className="font-bold">{game.homeScore} - {game.awayScore}</span>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
@@ -291,7 +259,7 @@ const GameManager = () => {
                 <TableCell>{getStatusBadge(game.status)}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" onClick={() => openEditModal(game)}>
                       <Edit className="w-4 h-4" />
                     </Button>
                     <Button

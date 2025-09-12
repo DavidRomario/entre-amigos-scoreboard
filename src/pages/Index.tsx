@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 const Index = () => {
   return (
     <div className="min-h-screen relative">
-      {/* Botão de Login Admin - Posição fixa */}
+
       <Link to="/login">
         <Button
           variant="hero"

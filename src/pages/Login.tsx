@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { loginAdmin } from "../services/authServices"
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,34 +21,22 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    try {
-      // Aqui você integrará com sua API
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('adminToken', data.token);
-        toast({
-          title: "Login realizado com sucesso!",
-          description: "Bem-vindo ao painel administrativo.",
-        });
-        navigate('/admin');
-      } else {
-        throw new Error('Credenciais inválidas');
-      }
-    } catch (error) {
-      toast({
-        title: "Erro no login",
-        description: "Email ou senha incorretos.",
-        variant: "destructive",
-      });
-    } finally {
+try {
+  const data = await loginAdmin(email, password);
+  localStorage.setItem("adminToken", data.token);
+  toast({
+    title: "Login realizado com sucesso!",
+    description: "Bem-vindo ao painel administrativo.",
+  });
+  navigate("/admin");
+} catch (error) {
+  toast({
+    title: "Erro no login",
+    description: "Email ou senha incorretos.",
+    variant: "destructive",
+  });
+}
+ finally {
       setIsLoading(false);
     }
   };
@@ -68,16 +58,16 @@ const Login = () => {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Usuário</Label>
             <Input
               id="email"
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@entreamigos.com"
-              required
+              placeholder="user"
             />
           </div>
+
 
           <div className="space-y-2">
             <Label htmlFor="password">Senha</Label>

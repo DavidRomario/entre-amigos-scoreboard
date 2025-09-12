@@ -1,6 +1,28 @@
+import { useState, useEffect } from "react";
 import { Heart, Users, Trophy } from "lucide-react";
+import { getAllUsers } from "@/services/usersServices";
+import { getAllMatches } from "@/services/matchesServices";
 
 const Footer = () => {
+  const [totalPlayers, setTotalPlayers] = useState(0);
+  const [totalGames, setTotalGames] = useState(0);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const usersRes = await getAllUsers();
+        if (usersRes.success) setTotalPlayers(usersRes.total);
+
+        const gamesRes = await getAllMatches();
+        setTotalGames(gamesRes.length);
+      } catch (error) {
+        console.error("Erro ao buscar estatísticas:", error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
   return (
     <footer className="gradient-hero text-white py-16">
       <div className="max-w-7xl mx-auto px-6">
@@ -20,27 +42,22 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Stats */}
           <div>
             <h4 className="text-xl font-semibold mb-6">Nossos Números</h4>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-white/80">Jogadores Ativos</span>
-                <span className="font-bold text-victory">20</span>
+                <span className="font-bold text-victory">{totalPlayers}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-white/80">Jogos na Temporada</span>
-                <span className="font-bold text-victory">18</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-white/80">Gols Marcados</span>
-                <span className="font-bold text-victory">45</span>
+                <span className="font-bold text-victory">{totalGames}</span>
               </div>
             </div>
           </div>
 
           {/* Contact & Info */}
-          <div>
+          {/* <div>
             <h4 className="text-xl font-semibold mb-6">Informações</h4>
             <div className="space-y-4 text-white/80">
               <div>
@@ -48,7 +65,7 @@ const Footer = () => {
                 <div className="text-sm">WhatsApp: (11) 99999-9999</div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="border-t border-white/20 mt-12 pt-8">
@@ -56,12 +73,12 @@ const Footer = () => {
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <Trophy className="w-5 h-5 text-victory" />
               <span className="text-sm text-white/80">
-                © 2025 Entre Amigos FC. Todos os direitos reservados.
+                © {new Date().getFullYear()} Entre Amigos FC. Todos os direitos reservados.
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm text-white/80">
               <Users className="w-4 h-4" />
-              <span>Feito por David Romário, atacante do Entre Amigos FC</span>
+              <span>Feito por David Romário.</span>
             </div>
           </div>
         </div>

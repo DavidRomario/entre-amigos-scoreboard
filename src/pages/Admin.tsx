@@ -7,42 +7,90 @@ import { Users, Trophy, Plus, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import PlayerManager from "@/components/admin/PlayerManager";
 import GameManager from "@/components/admin/GameManager";
+import { getAllUsers } from "@/services/usersServices";
+import { getAllMatches } from "@/services/matchesServices";
 
 const Admin = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [players, setPlayers] = useState([]);
+  const [totalPlayers, setTotalPlayers] = useState(0);
+  const [matches, setMatches] = useState([]);
+  const [totalGames, setTotalGames] = useState(0);
+  const [totalVictories, setTotalVictories] = useState(0);
+
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem("adminToken");
     if (!token) {
-      navigate('/login');
+      navigate("/login");
     } else {
       setIsAuthenticated(true);
     }
   }, [navigate]);
 
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const res = await getAllUsers();
+        if (res.success) {
+          setPlayers(res.users);
+          setTotalPlayers(res.total);
+        }
+      } catch (error) {
+        toast({
+          title: "Erro",
+          description: "Não foi possível carregar os jogadores.",
+          variant: "destructive",
+        });
+        console.error(error);
+      }
+    };
+
+    fetchPlayers();
+  }, [toast]);
+
+  useEffect(() => {
+    const fetchMatches = async () => {
+      try {
+        const data = await getAllMatches();
+        setMatches(data);
+        setTotalGames(data.length);
+        const victories = data.filter(
+          (game) => game.goals_entre_amigos > game.goals_opponent
+        ).length;
+        setTotalVictories(victories);
+      } catch (error) {
+        toast({
+          title: "Erro",
+          description: "Não foi possível carregar os jogos.",
+          variant: "destructive",
+        });
+        console.error(error);
+      }
+    };
+
+    fetchMatches();
+  }, [toast]);
+
   const handleLogout = () => {
-    localStorage.removeItem('adminToken');
+    localStorage.removeItem("adminToken");
     toast({
       title: "Logout realizado",
       description: "Você foi desconectado com sucesso.",
     });
-    navigate('/login');
+    navigate("/");
   };
 
-  if (!isAuthenticated) {
-    return null;
-  }
+  if (!isAuthenticated) return null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-mustard-light via-white to-team-black/10">
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-team-black">
-              Painel Administrativo
-            </h1>
+            <h1 className="text-2xl font-bold text-team-black">Painel Administrativo</h1>
             <p className="text-muted-foreground">Entre Amigos FC</p>
           </div>
           <Button
@@ -65,7 +113,7 @@ const Admin = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total de Jogadores</p>
-                <p className="text-2xl font-bold text-team-black">23</p>
+                <p className="text-2xl font-bold text-team-black">{totalPlayers}</p>
               </div>
             </div>
           </Card>
@@ -77,7 +125,7 @@ const Admin = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Jogos Disputados</p>
-                <p className="text-2xl font-bold text-team-black">15</p>
+                <p className="text-2xl font-bold text-team-black">{totalGames}</p>
               </div>
             </div>
           </Card>
@@ -89,7 +137,7 @@ const Admin = () => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Vitórias</p>
-                <p className="text-2xl font-bold text-team-black">8</p>
+                <p className="text-2xl font-bold text-team-black">{totalVictories}</p>
               </div>
             </div>
           </Card>
@@ -108,7 +156,17 @@ const Admin = () => {
           </TabsList>
 
           <TabsContent value="players">
-            <PlayerManager />
+            <PlayerManager
+              players={players}
+              fetchPlayers={() =>
+                getAllUsers().then((res) => {
+                  if (res.success) {
+                    setPlayers(res.users);
+                    setTotalPlayers(res.total);
+                  }
+                })
+              }
+            />
           </TabsContent>
 
           <TabsContent value="games">
