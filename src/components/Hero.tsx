@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-mustard-field.jpg";
-import { Trophy, Users, Calendar } from "lucide-react";
+import heroImage from "@/assets/entre-amigos.jpg";
+import { Users, Calendar } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -25,21 +25,16 @@ const Hero = () => {
         </div>
         
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="grid grid-flow-col flex flex gap-6 mb-10">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-card">
-            <Trophy className="w-8 h-8 text-victory mx-auto mb-3" />
-            <div className="text-2xl font-bold">5</div>
-            <div className="text-sm text-white/80">Torneios Vencidos</div>
+            <Users className="w-8 h-8 text-black mx-auto mb-3" />
+            <div className="text-2xl font-bold text-black">20</div>
+            <div className="text-sm text-white/80 text-black">Jogadores Ativos</div>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-card">
-            <Users className="w-8 h-8 text-victory mx-auto mb-3" />
-            <div className="text-2xl font-bold">20</div>
-            <div className="text-sm text-white/80">Jogadores Ativos</div>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-card">
-            <Calendar className="w-8 h-8 text-victory mx-auto mb-3" />
-            <div className="text-2xl font-bold">3</div>
-            <div className="text-sm text-white/80">Anos de História</div>
+            <Calendar className="w-8 h-8 text-black mx-auto mb-3" />
+            <div className="text-2xl font-bold text-black">4</div>
+            <div className="text-sm text-white/80 text-black">Anos de História</div>
           </div>
         </div>
         

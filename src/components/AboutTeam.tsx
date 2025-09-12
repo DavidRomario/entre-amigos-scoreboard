@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Heart, Shield, Target } from "lucide-react";
+import heroImage from "@/assets/entre-amigos.jpg";
 
 const AboutTeam = () => {
   const values = [
@@ -55,12 +56,12 @@ const AboutTeam = () => {
               <h3 className="text-3xl font-bold text-team-black mb-6">Nossa História</h3>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Tudo começou quando um grupo de amigos da faculdade decidiu que queria 
+                  Tudo começou quando um grupo de amigos decidiu que queria 
                   levar o futebol mais a sério. Depois de meses jogando em campos alugados, 
                   decidimos formar oficialmente o time "Entre Amigos".
                 </p>
                 <p>
-                  Desde então, participamos de diversos campeonatos locais, sempre mantendo 
+                  Desde então, participamos de diversos festivais locais, sempre mantendo 
                   o espírito de camaradagem que nos define. Nosso lema é simples: jogamos 
                   para vencer, mas nunca esquecemos que somos amigos primeiro.
                 </p>
@@ -71,22 +72,11 @@ const AboutTeam = () => {
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-primary/10 rounded-xl p-6 text-center">
-                <div className="text-3xl font-bold text-primary mb-2">50+</div>
-                <div className="text-sm text-muted-foreground">Jogos Disputados</div>
-              </div>
-              <div className="bg-victory/10 rounded-xl p-6 text-center">
-                <div className="text-3xl font-bold text-victory mb-2">75%</div>
-                <div className="text-sm text-muted-foreground">Taxa de Vitórias</div>
-              </div>
-              <div className="bg-primary/10 rounded-xl p-6 text-center">
-                <div className="text-3xl font-bold text-primary mb-2">120</div>
-                <div className="text-sm text-muted-foreground">Gols Marcados</div>
-              </div>
-              <div className="bg-victory/10 rounded-xl p-6 text-center">
-                <div className="text-3xl font-bold text-victory mb-2">8</div>
-                <div className="text-sm text-muted-foreground">Campeonatos</div>
-              </div>
+                <img
+                src={heroImage}
+                alt="Entre Amigos"
+                className="w-full h-full object-cover rounded-xl shadow-md col-span-2"
+              />
             </div>
           </div>
         </div>

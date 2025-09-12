@@ -11,52 +11,44 @@ const Players = () => {
       number: 10,
       goals: 15,
       assists: 8,
-      status: "Titular"
     },
     {
       id: 2,
       name: "Pedro Santos",
       position: "Goleiro",
       number: 1,
-      saves: 45,
-      cleanSheets: 12,
-      status: "Titular"
     },
     {
       id: 3,
       name: "Carlos Mendes",
       position: "Zagueiro",
       number: 4,
-      tackles: 78,
-      blocks: 23,
-      status: "Titular"
+      goals: 15,
+      assists: 8,
     },
     {
       id: 4,
       name: "Rafael Lima",
       position: "Meio-campo",
       number: 8,
-      passes: 234,
-      assists: 12,
-      status: "Titular"
+      goals: 15,
+      assists: 8,
     },
     {
       id: 5,
       name: "Bruno Costa",
       position: "Lateral",
       number: 2,
-      crosses: 45,
-      tackles: 34,
-      status: "Reserva"
+      goals: 15,
+      assists: 8,
     },
     {
       id: 6,
       name: "Lucas Ferreira",
       position: "Atacante",
       number: 11,
-      goals: 8,
-      assists: 5,
-      status: "Reserva"
+      goals: 15,
+      assists: 8,
     }
   ];
 
@@ -71,19 +63,14 @@ const Players = () => {
       case 'Atacante':
         return 'bg-destructive text-white';
       case 'Lateral':
-        return 'bg-secondary text-team-black';
+        return 'bg-primary text-green';
       default:
         return 'bg-muted text-muted-foreground';
     }
   };
 
   const getPlayerStats = (player: any) => {
-    if (player.position === 'Goleiro') {
-      return [
-        { label: 'Defesas', value: player.saves },
-        { label: 'Jogos sem sofrer gols', value: player.cleanSheets }
-      ];
-    } else if (player.position === 'Atacante') {
+    if (player.position === 'Goleiro', 'Atacante', 'Meio-campo', 'Zagueiro', 'Lateral') {
       return [
         { label: 'Gols', value: player.goals },
         { label: 'Assistências', value: player.assists }
@@ -92,11 +79,6 @@ const Players = () => {
       return [
         { label: 'Passes', value: player.passes },
         { label: 'Assistências', value: player.assists }
-      ];
-    } else {
-      return [
-        { label: 'Desarmes', value: player.tackles },
-        { label: 'Bloqueios', value: player.blocks || player.crosses }
       ];
     }
   };
@@ -130,9 +112,6 @@ const Players = () => {
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-primary">#{player.number}</div>
-                  <Badge variant={player.status === 'Titular' ? 'default' : 'secondary'} className="mt-1">
-                    {player.status}
-                  </Badge>
                 </div>
               </div>
 
@@ -144,31 +123,8 @@ const Players = () => {
                   </div>
                 ))}
               </div>
-
-              <div className="flex items-center gap-2 mt-4 text-sm text-muted-foreground">
-                <Activity className="w-4 h-4" />
-                <span>Ativo na temporada</span>
-              </div>
             </Card>
           ))}
-        </div>
-
-        <div className="text-center mt-16">
-          <Card className="inline-block p-8 shadow-card bg-white">
-            <Award className="w-12 h-12 text-victory mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-team-black mb-2">Jogador Destaque</h3>
-            <p className="text-muted-foreground mb-4">João Silva - Artilheiro da temporada</p>
-            <div className="flex items-center justify-center gap-4 text-sm">
-              <div className="text-center">
-                <div className="text-lg font-bold text-primary">15</div>
-                <div className="text-muted-foreground">Gols</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-primary">8</div>
-                <div className="text-muted-foreground">Assistências</div>
-              </div>
-            </div>
-          </Card>
         </div>
       </div>
     </section>

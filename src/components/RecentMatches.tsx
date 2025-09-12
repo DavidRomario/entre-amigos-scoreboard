@@ -12,7 +12,6 @@ const RecentMatches = () => {
       awayScore: 1,
       location: "Campo do Parque",
       status: "victory",
-      highlights: ["Hat-trick do João", "Defesa espetacular do Pedro"]
     },
     {
       id: 2,
@@ -22,7 +21,6 @@ const RecentMatches = () => {
       awayScore: 2,
       location: "Centro Esportivo",
       status: "draw",
-      highlights: ["Gol nos acréscimos", "Jogo emocionante"]
     },
     {
       id: 3,
@@ -32,7 +30,6 @@ const RecentMatches = () => {
       awayScore: 2,
       location: "Campo da Escola",
       status: "defeat",
-      highlights: ["Luta até o fim", "Boa atuação defensiva"]
     }
   ];
 
@@ -91,18 +88,6 @@ const RecentMatches = () => {
               <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
                 <MapPin className="w-4 h-4" />
                 {match.location}
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium text-team-black">
-                  <Target className="w-4 h-4" />
-                  Destaques:
-                </div>
-                {match.highlights.map((highlight, index) => (
-                  <div key={index} className="text-sm text-muted-foreground pl-6">
-                    • {highlight}
-                  </div>
-                ))}
               </div>
             </Card>
           ))}
