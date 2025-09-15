@@ -65,7 +65,7 @@ const GameManager = () => {
   const openEditModal = (game) => {
     setEditingGameId(game.id);
     setNewGame({
-      date: new Date(game.date).toISOString().split("T")[0],
+      date: game.date,
       opponent: game.opponent,
       homeScore: game.homeScore.toString(),
       awayScore: game.awayScore.toString(),
