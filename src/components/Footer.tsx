@@ -32,7 +32,7 @@ const Footer = () => {
             <h3 className="text-2xl font-bold mb-6 text-black">Entre Amigos FC</h3>
             <p className="text-white/80 mb-6">
               Mais que um time, uma família unida pela paixão do futebol. 
-              Desde 2021 levando alegria e emoção para os campos.
+              Desde 2020 levando alegria e emoção para os campos.
             </p>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
