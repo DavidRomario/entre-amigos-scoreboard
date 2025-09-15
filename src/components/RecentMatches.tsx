@@ -7,13 +7,18 @@ import { getAllMatches } from "@/services/matchesServices";
 const RecentMatches = () => {
   const [matches, setMatches] = useState([]);
 
-  useEffect(() => {
-    const fetchMatches = async () => {
-      try {
-        const data = await getAllMatches();
-        const formattedMatches = data.map((match) => ({
+useEffect(() => {
+  const fetchMatches = async () => {
+    try {
+      const data = await getAllMatches();
+      const formattedMatches = data.map((match) => {
+        // pega apenas a parte da data (YYYY-MM-DD)
+        const [year, month, day] = match.match_date.split("T")[0].split("-");
+        const formattedDate = `${day}/${month}/${year}`;
+
+        return {
           id: match.id,
-          date: new Date(match.match_date).toLocaleDateString("pt-BR"),
+          date: formattedDate, // agora dd/mm/yyyy
           opponent: match.opponent_name,
           homeScore: match.goals_entre_amigos,
           awayScore: match.goals_opponent,
@@ -24,21 +29,23 @@ const RecentMatches = () => {
               : match.goals_entre_amigos < match.goals_opponent
               ? "defeat"
               : "draw",
-        }));
+        };
+      });
 
       formattedMatches.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        (a, b) => new Date(b.date.split("/").reverse().join("-")).getTime() -
+                  new Date(a.date.split("/").reverse().join("-")).getTime()
       );
 
+      setMatches(formattedMatches);
+    } catch (error) {
+      console.error("Erro ao buscar partidas:", error);
+    }
+  };
 
-        setMatches(formattedMatches);
-      } catch (error) {
-        console.error("Erro ao buscar partidas:", error);
-      }
-    };
+  fetchMatches();
+}, []);
 
-    fetchMatches();
-  }, []);
 
   const getStatusBadge = (status) => {
     switch (status) {
