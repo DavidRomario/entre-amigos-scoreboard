@@ -33,7 +33,7 @@ const GameManager = () => {
       const formattedGames = data.map((game) => {
         const [year, month, day] = game.match_date.split("-");
         return {
-          ...game,
+          id: game.id,
           date: `${day}/${month}/${year}`,
           opponent: game.opponent_name,
           homeScore: game.goals_entre_amigos,
@@ -42,7 +42,6 @@ const GameManager = () => {
           status: getGameStatus(game.goals_entre_amigos, game.goals_opponent),
         };
       });
-
       setGames(formattedGames);
     } catch (error) {
       console.error(error);
