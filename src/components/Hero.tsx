@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Hero = () => {
   const [totalPlayers, setTotalPlayers] = useState(0);
   const [yearsOfHistory, setYearsOfHistory] = useState(0);
-  const foundationDate = new Date("2021-02-07");
+  const foundationDate = new Date("2020-02-02");
   const navigate = useNavigate();
 
   useEffect(() => {
