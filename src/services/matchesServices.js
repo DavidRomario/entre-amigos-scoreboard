@@ -1,7 +1,7 @@
-const API_URL = "http://localhost:3000/matches";
+import { API_URL } from "../config/api";
 
 export async function getAllMatches() {
-  const res = await fetch(`${API_URL}/all`);
+  const res = await fetch(`${API_URL}/matches/all`);
   if (!res.ok) throw new Error("Erro ao buscar partidas");
 
   const data = await res.json();
@@ -9,7 +9,7 @@ export async function getAllMatches() {
 }
 
 export async function addMatch(match) {
-  const res = await fetch(`${API_URL}/add`, {
+  const res = await fetch(`${API_URL}/matches/add`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(match),
@@ -21,7 +21,7 @@ export async function addMatch(match) {
 }
 
 export async function editMatch(id, match) {
-  const res = await fetch(`${API_URL}/edit/${id}`, {
+  const res = await fetch(`${API_URL}/matches/edit/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(match),
@@ -30,6 +30,6 @@ export async function editMatch(id, match) {
 }
 
 export async function deleteMatch(id) {
-  const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+  const res = await fetch(`${API_URL}/matches/${id}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Erro ao deletar partida");
 }

@@ -62,7 +62,7 @@ const AboutTeam = () => {
                 </p>
                 <p>
                   Desde então, participamos de diversos festivais locais, sempre mantendo 
-                  o espírito de camaradagem que nos define. Nosso lema é simples: jogamos 
+                  o espírito da amizade que nos define. Nosso lema é simples: jogamos 
                   para vencer, mas nunca esquecemos que somos amigos primeiro.
                 </p>
                 <p>
