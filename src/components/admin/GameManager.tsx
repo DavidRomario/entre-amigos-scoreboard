@@ -30,15 +30,19 @@ const GameManager = () => {
   const fetchGames = async () => {
     try {
       const data = await getAllMatches();
-      const formattedGames = data.map((game) => ({
-        id: game.id,
-        date: new Date(game.match_date).toLocaleDateString(),
-        opponent: game.opponent_name,
-        homeScore: game.goals_entre_amigos,
-        awayScore: game.goals_opponent,
-        location: game.location,
-        status: getGameStatus(game.goals_entre_amigos, game.goals_opponent),
-      }));
+      const formattedGames = data.map((game) => {
+        const [year, month, day] = game.match_date.split("-");
+        const dateObj = new Date(Number(year), Number(month) - 1, Number(day));
+        return {
+          id: game.id,
+          date: dateObj.toLocaleDateString(),
+          opponent: game.opponent_name,
+          homeScore: game.goals_entre_amigos,
+          awayScore: game.goals_opponent,
+          location: game.location,
+          status: getGameStatus(game.goals_entre_amigos, game.goals_opponent),
+        };
+      });
       setGames(formattedGames);
     } catch (error) {
       console.error(error);
