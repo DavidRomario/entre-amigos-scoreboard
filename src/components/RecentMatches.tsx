@@ -46,7 +46,6 @@ useEffect(() => {
   fetchMatches();
 }, []);
 
-
   const getStatusBadge = (status) => {
     switch (status) {
       case "victory":

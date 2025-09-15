@@ -29,7 +29,7 @@ const AboutTeam = () => {
             Sobre o <span className="text-primary">Entre Amigos</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Fundado em 2021, o Entre Amigos nasceu da paixão compartilhada por um grupo de amigos 
+            Fundado em 2020, o Entre Amigos nasceu da paixão compartilhada por um grupo de amigos 
             que se reunia todos os fins de semana para jogar futebol. O que começou como diversão 
             se transformou em um time sério, competitivo e unido.
           </p>
