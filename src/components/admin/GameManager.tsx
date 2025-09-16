@@ -34,7 +34,7 @@ const GameManager = () => {
         const [year, month, day] = game.match_date.split("T")[0].split("-");
         return {
           id: game.id,
-          date: `${day}/${month}/${year}`, // 16/09/2025
+          date: `${day}/${month}/${year}`,
           opponent: game.opponent_name,
           homeScore: game.goals_entre_amigos,
           awayScore: game.goals_opponent,

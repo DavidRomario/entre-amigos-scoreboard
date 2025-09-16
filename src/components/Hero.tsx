@@ -66,8 +66,7 @@ const Hero = () => {
             Mais que um time, uma família unida pela paixão do futebol
           </p>
         </div>
-        
-        {/* Stats */}
+
         <div className="grid grid-flow-col flex flex gap-6 mb-10">
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-card">
             <Users className="w-8 h-8 text-black mx-auto mb-3" />

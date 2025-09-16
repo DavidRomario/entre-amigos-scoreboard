@@ -12,13 +12,12 @@ useEffect(() => {
     try {
       const data = await getAllMatches();
       const formattedMatches = data.map((match) => {
-        // pega apenas a parte da data (YYYY-MM-DD)
         const [year, month, day] = match.match_date.split("T")[0].split("-");
         const formattedDate = `${day}/${month}/${year}`;
 
         return {
           id: match.id,
-          date: formattedDate, // agora dd/mm/yyyy
+          date: formattedDate,
           opponent: match.opponent_name,
           homeScore: match.goals_entre_amigos,
           awayScore: match.goals_opponent,

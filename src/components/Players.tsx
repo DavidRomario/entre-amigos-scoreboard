@@ -58,11 +58,24 @@ const Players = () => {
     }
   };
 
+  const positionOrder = [
+    "Goleiro",
+    "Zagueiro",
+    "Lateral",
+    "Volante",
+    "Meio-campo",
+    "Atacante",
+  ];
+
+  const sortedPlayers = [...players].sort(
+    (a, b) => positionOrder.indexOf(a.position) - positionOrder.indexOf(b.position)
+  );
+
   return (
     <section className="py-20 bg-mustard-light">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2  id="team-section" className="text-4xl md:text-5xl font-bold text-team-black mb-6">
+          <h2 id="team-section" className="text-4xl md:text-5xl font-bold text-team-black mb-6">
             Nosso <span className="text-primary">Elenco</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -71,7 +84,7 @@ const Players = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {players.map((player) => (
+          {sortedPlayers.map((player) => (
             <Card
               key={player.id}
               className="p-6 shadow-card hover:shadow-field transition-smooth border-0 bg-white"
